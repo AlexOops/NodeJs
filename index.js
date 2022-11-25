@@ -1,39 +1,24 @@
-const EventEmitter = require('events'), emitter = new EventEmitter();
-require('moment-precise-range-plugin');
-const moment = require('moment')
+const fs = require('fs');
+const readline = require('readline');
 
-const [userDate] = process.argv.slice(2);
-const format = 'YYYY-MM-DD HH';
+const readStream = fs.createReadStream('./access_tmp.log', 'utf-8');
+const writeStreamFirst = fs.createWriteStream('./89.123.1.41_requests.log');
+const writeStreamSecond = fs.createWriteStream('./34.48.240.111_requests.log');
 
-const getDateFromDateString = dateString => {
-    const [hour, day, month, year] = dateString.split('-')
-    return new Date(Date.UTC(year, month - 1, day, hour))
-}
-
-const dateInFuture = getDateFromDateString(userDate);
-
-const showRemainingTime = dateInFuture => {
-    const dateNow = new Date();
-
-    if (dateNow >= dateInFuture) {
-        emitter.emit('timerEnd');
-    } else {
-        const currentDateFormatted = moment(dateNow, format);
-        const futureDateFormatted = moment(dateInFuture, format);
-        console.log(moment.preciseDiff(currentDateFormatted, futureDateFormatted));
-    }
-}
-
-const timerId = setInterval(() => {
-    emitter.emit('timerTick', dateInFuture);
-}, 500);
-
-const showTimerDone = timerId => {
-    clearInterval(timerId);
-    console.log('STOP');
-}
-
-emitter.on('timerTick', showRemainingTime)
-emitter.on('timerEnd', () => {
-    showTimerDone(timerId);
+const readLine = readline.createInterface({
+    input: readStream,
+    terminal: true,
 })
+
+readLine.on('line', line => {
+    if (line.includes('89.123.1.41')) {
+        writeStreamFirst.write(line + '\n');
+    }
+
+    if (line.includes('34.48.240.111')) {
+        writeStreamSecond.write(line + '\n');
+    }
+})
+
+writeStreamFirst.end(() => console.log('Writing to file 89.123.1.41_requests.log is completed'));
+writeStreamSecond.end(() => console.log('Writing to file 34.48.240.111_requests.log is completed'));
