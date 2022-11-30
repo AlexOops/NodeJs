@@ -2,9 +2,10 @@
   "name": "exe",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "cli.js",
   "scripts": {
-    "dev": "node index.js",
+    "dev": "node cli.js",
+    "start": "node cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -13,9 +14,14 @@
     "colors": "^1.4.0",
     "moment": "^2.29.4",
     "moment-precise-range-plugin": "^1.3.0",
-    "node": "^19.1.0"
+    "node": "^19.1.0",
+    "yargs": "^17.6.2"
   },
   "devDependencies": {
-    "eslint": "^8.27.0"
+    "eslint": "^8.27.0",
+    "inquirer": "^8.0.0"
+  },
+  "bin": {
+    "reader": "cli.js"
   }
 }
